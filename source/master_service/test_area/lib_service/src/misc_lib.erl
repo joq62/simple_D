@@ -27,49 +27,23 @@
 %% External functions
 %% ====================================================================
 
-call(ServiceId,M,F,A,NumTries,Delay)->
-    call(ServiceId,M,F,A,NumTries,Delay,error).
-
-call(ServiceId,M,F,A,0,Delay,Result)->
-    {error,[exhausted_num_tries,Result,?MODULE,?LINE]};
-
-call(ServiceId,M,F,A,NumTries,Delay,Result)->
-    IpAddrList=tcp_client:call(?DNS_ADDRESS,{dns_service,get,[ServiceId]}),
-    call(IpAddrList,ServiceId,M,F,A,NumTries,Delay,Result).
-
-call([],ServiceId,M,F,A,NumTries,Delay,Result)->
-    timer:sleep(Delay),
-    IpAddrList=tcp_client:call(?DNS_ADDRESS,{dns_service,get,[ServiceId]}),
-    call(IpAddrList,ServiceId,M,F,A,NumTries-1,Delay,error);
-
-call([{IpAddr,Port,_Node}|T],ServiceId,M,F,A,NumTries,Delay,Result)->
-    case tcp_client:call({IpAddr,Port},{M,F,A}) of
-	{error,_}->
-	    timer:sleep(Delay),
-	    call(T,ServiceId,M,F,A,NumTries-1,Delay,error);
-	{badrpc,_}->
-	    timer:sleep(Delay),
-	    call(T,ServiceId,M,F,A,NumTries-1,Delay,error);
-	Result->
-	    Result 
-    end.
 %% --------------------------------------------------------------------
 %% Function: 
 %% Description:
 %% Returns: non
 %% --------------------------------------------------------------------
-log_event(Module,Line,Severity,Info)->
-    SysLog=#syslog_info{date=date(),
-			time=time(),
-			ip_addr=na,
-			port=na,
-			pod=node(),
-			module=Module,
-			line=Line,
-			severity=Severity,
-			message=Info
-		       },
-    tcp_client:call("log_service",log_service,store,[SysLog],5,500).
+%log_event(Module,Line,Severity,Info)->
+ %   SysLog=#syslog_info{date=date(),
+	%		time=time(),
+	%		ip_addr=na,
+	%		port=na,
+	%		pod=node(),
+	%		module=Module,
+	%		line=Line,
+	%		severity=Severity,
+	%		message=Info
+	%	       },
+  %  tcp_client:call("log_service",log_service,store,[SysLog],5,500).
 
 %% --------------------------------------------------------------------
 %% Function: 

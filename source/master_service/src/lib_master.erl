@@ -136,9 +136,9 @@ init(CatalogInfo,NodesInfo)->
     %Start dns_Service
     ok=start_service("dns_service",".",'pod_master@asus',CatalogInfo,NodesInfo),
     
-   %% Start tcp server  
-    {_NodeId,Node,IpAddr,Port,Mode}=lists:keyfind('pod_master@asus',2,NodesInfo),
-    ok=lib_service:start_tcp_server(IpAddr,Port,Mode),
+   %% tcp_server will already be started by boot SW 
+    {_NodeId,Node,IpAddr,Port,_Mode}=lists:keyfind('pod_master@asus',2,NodesInfo),
+  %  ok=lib_service:start_tcp_server(IpAddr,Port,Mode),
 
     %% Register master service 
     true=dns_service:add("master_service",IpAddr,Port,Node),
@@ -273,7 +273,7 @@ stop_pod(ComputerIpInfo,Node,NodeId)->
 %% Returns: non
 %% --------------------------------------------------------------------
 start_service(ServiceId,NodeDir,Node,CatalogInfo,NodesInfo)->
-    {{service,Service},{Source,Path}}=lists:keyfind({service,ServiceId},1,CatalogInfo),
+    {{service,_Service},{Source,Path}}=lists:keyfind({service,ServiceId},1,CatalogInfo),
     {_NodeId,Node,IpAddr,Port,_Mode}=lists:keyfind(Node,2,NodesInfo),
 
     ok=container:create(Node,NodeDir,

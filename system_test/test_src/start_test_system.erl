@@ -36,11 +36,20 @@
 %% Returns: non
 %% --------------------------------------------------------------------
 start()->
-    create(),
+    start_nodes(),
+    ok=application:start(master_service),
+    check_all_services_started(6,1000,1),
     check_nodes(),
     ok.
 
-
+check_all_services_started(NumApps,Interval,N)->
+    case lists:flatlength(dns_service:all()) of
+	NumApps->
+	    N;
+	_ ->
+	    timer:sleep(Interval),
+	    check_all_services_started(NumApps,Interval,N+1)
+    end.	    
 
 
 %% --------------------------------------------------------------------
@@ -62,35 +71,30 @@ check_nodes()->
 %% Description: Initiate the eunit tests, set upp needed processes etc
 %% Returns: non
 %% -------------------------------------------------------------------
-
-
-
-
-create()->
-    %start master already started 
-    ?assertMatch({pong,_,_},tcp_client:call({"localhost",40000},{master_service,ping,[]})),
-    NodeList=tcp_client:call({"localhost",40000},{master_service,nodes,[]}),
-    %% test glurk
+start_nodes()->
+    %% Start lib_service and tcp_server for pod_master 
+    ok=application:start(lib_service),    
+   lib_service:start_tcp_server("localhost",40000,parallell), 
     D=date(),
     ?assertEqual(D,tcp_client:call({"localhost",40000},{erlang,date,[]})),
-
+    %% Create worker pods 
+    {ok,NodeList}=file:consult(?NODE_CONFIG),
     WorkerList=[{NodeId,Node,IpAddr,Port,Mode}||{NodeId,Node,IpAddr,Port,Mode}<-NodeList,
 						NodeId=/="pod_master"],
-  %  ?assertMatch(glurk,WorkerList),
     IpInfoComputer={"localhost",40000},
     NodeComputer='pod_master@asus',
-  %  ?assertEqual(glurk,tcp_client:call({"localhost",40000},{erlang,date,[]})),
     NeededServices=[{{service,"lib_service"},{dir,"/home/pi/erlang/d/source"}}],
+  
+%  ?assertMatch([ok,ok,ok],[lib_master:start_pod(IpInfoComputer,NodeComputer,
+%						  {Node,NodeId,IpAddrPod,PortPod,ModePod},
+%						  NeededServices)
+%		 ||{NodeId,Node,IpAddrPod,PortPod,ModePod}<-WorkerList]),
     ?assertMatch([ok,ok,ok],[tcp_client:call(IpInfoComputer,{lib_master,start_pod,
-						     [{"localhost",40000},NodeComputer,
-						      {Node,NodeId,IpAddrPod,PortPod,ModePod},
-						      NeededServices]})
+							     [{"localhost",40000},NodeComputer,
+							      {Node,NodeId,IpAddrPod,PortPod,ModePod},
+							      NeededServices]})
 		     ||{NodeId,Node,IpAddrPod,PortPod,ModePod}<-WorkerList]),
-
-    
-    
     ok.
-
 
 
 

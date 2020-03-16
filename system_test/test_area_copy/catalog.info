@@ -1,0 +1,6 @@
+{{service,"adder_service"},{dir,"/home/pi/erlang/simple_d/source"}}.
+{{service,"divi_service"},{dir,"/home/pi/erlang/simple_d/source"}}.
+{{service,"boot_service"},{dir,"/home/pi/erlang/simple_d/source"}}.
+{{service,"dns_service"},{dir,"/home/pi/erlang/simple_d/source"}}.
+{{service,"log_service"},{dir,"/home/pi/erlang/simple_d/source"}}.
+{{service,"lib_service"},{dir,"/home/pi/erlang/simple_d/source"}}.

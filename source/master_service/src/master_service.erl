@@ -139,7 +139,7 @@ init([]) ->
     {ok,CatalogInfo}=file:consult(?CATALOG_INFO),
     lib_master:init(CatalogInfo,NodesInfo),
     DesiredServices=lib_master:create_service_list(AppInfo,NodesInfo),
- %   spawn(fun()->heart_beat(?MASTER_HEARTBEAT) end),
+    spawn(fun()->heart_beat(?MASTER_HEARTBEAT) end),
     {ok, #state{nodes=NodesInfo,apps=AppInfo,catalog=CatalogInfo,
 		desired_services=DesiredServices,
 		dns_address=[],tcp_servers=[]}}.   
@@ -322,8 +322,7 @@ code_change(_OldVsn, State, _Extra) ->
 %% Returns: non
 %% --------------------------------------------------------------------
 h_beat(Interval)->
-    timer:sleep(5*1000),
-    master_service:campaign(), 
+    lib_master:campaign(), 
     timer:sleep(Interval),
     rpc:cast(node(),?MODULE,heart_beat,[Interval]).
 

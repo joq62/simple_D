@@ -6,7 +6,8 @@ all:
 
 test:
 	rm -rf dns_service log_service lib_service ../ebin/* ../src/*~ test_ebin/* ../test_src/*~ ../test_src/lib_service* ../test_src/container*;
-	cp ../src/*.app ebin;
+	cp /home/pi/erlang/simple_d/source/master_service/src/*.erl ../src;
+	cp /home/pi/erlang/simple_d/source/master_service/src/*.app ebin;
 	cp -r /home/pi/erlang/simple_d/source/lib_service .;
 	cp /home/pi/erlang/simple_d/source/lib_service/src/*.app ebin;
 	erlc -D local -I /home/pi/erlang/simple_d/source/include -o ebin lib_service/src/*.erl;

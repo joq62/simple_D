@@ -1,6 +1,10 @@
 %%% -------------------------------------------------------------------
 %%% Author  : uabjle
 %%% Description : 
+%%% Three computers 
+%%% {"pod_computer_1", "localhost",40100,parallell, 40101, 10}
+%%% {"pod_computer_2", "localhost" 40200,parallell, 40201, 10}
+%%% {"pod_computer_3", "localhost" 40300,parallell, 40301,10}
 %%% Each pod has its port number as vm name pod_40101@asus
 %%% 
 %%% Created : 10 dec 2012
@@ -34,14 +38,21 @@ cases_test()->
     stop_test_system:start(),
     clean_start(),
     eunit_start(),
-    master_service_test_cases:start_init_test(),
     start_test_system:start(),
-    %% Start System test
-    master_service:campaign(),
-    timer:sleep(2000),
     app1_test:start(),
-    %% End system test
+    
     stop_test_system:start(),
+   % catalog_test:start(),
+
+%   app_test_cases:start(),
+     
+     
+  %   node_controller_test_cases:start(),
+   %  app_controller_test_cases:start(),
+  %   master_service_test_cases:
+  %   master_service_test_cases:
+   %  system_test_cases:test_adder_divi(),
+     % cleanup and stop eunit 
      stop_computer_pods(),
      clean_stop(),
      eunit_stop().
@@ -53,7 +64,7 @@ cases_test()->
 %% Returns: non
 %% --------------------------------------------------------------------
 start()->
-    spawn(fun()->eunit:test({timeout,30,master_service}) end).
+    spawn(fun()->eunit:test({timeout,2*60,master_service}) end).
 
 clean_start()->
     ?assertEqual([],os:cmd("rm -rf  dns_service")),
@@ -61,10 +72,8 @@ clean_start()->
     L1=lists:keydelete(node(),2, NodesInfo),
     [rpc:call(Vm,init,stop,[])||{_,Vm,_,_}<-L1],
     [pod:delete(node(),VmName)||{VmName,_,_,_}<-L1],
-    ok=application:start(lib_service),
     ok.
 eunit_start()->
-    
     ok.
 
 clean_stop()->

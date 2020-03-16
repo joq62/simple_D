@@ -1,0 +1,10 @@
+{dir,adder_service,"/home/pi/erlang/simple_d/source/adder_service"},
+{dir,boot_service,"/home/pi/erlang/simple_d/source/boot_service"}.
+{dir,computer_service,"/home/pi/erlang/simple_d/source/computer_service"}.
+{dir,dns_service,"/home/pi/erlang/simple_d/source/dns_service"}.
+{dir,divi_service,"/home/pi/erlang/simple_d/source/divi_service"}.
+{dir,etcd_service,"/home/pi/erlang/simple_d/source/etcd_service"}.
+{dir,iaas_service,"/home/pi/erlang/simple_d/source/iaas_service"}.
+{dir,lib_service,"/home/pi/erlang/simple_d/source/lib_service"}.
+{dir,log_service,"/home/pi/erlang/simple_d/source/log_service"}.
+{dir,master_service,"/home/pi/erlang/simple_d/source/master_service"}.

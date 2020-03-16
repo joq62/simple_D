@@ -35,19 +35,19 @@
 call(ServiceId,M,F,A,NumTries,Delay)->
     tcp_client:call(ServiceId,M,F,A,NumTries,Delay,error).
 
-call(ServiceId,M,F,A,0,Delay,Result)->
+call(_ServiceId,_M,_F,_A,0,_Delay,Result)->
     {error,[exhausted_num_tries,Result,?MODULE,?LINE]};
 
 call(ServiceId,M,F,A,NumTries,Delay,Result)->
     IpAddrList=tcp_client:call(?DNS_ADDRESS,{dns_service,get,[ServiceId]}),
     call(IpAddrList,ServiceId,M,F,A,NumTries,Delay,Result).
 
-call([],ServiceId,M,F,A,NumTries,Delay,Result)->
+call([],ServiceId,M,F,A,NumTries,Delay,_Result)->
     timer:sleep(Delay),
     IpAddrList=tcp_client:call(?DNS_ADDRESS,{dns_service,get,[ServiceId]}),
     call(IpAddrList,ServiceId,M,F,A,NumTries-1,Delay,error);
 
-call([{IpAddr,Port,_Node}|T],ServiceId,M,F,A,NumTries,Delay,Result)->
+call([{IpAddr,Port,_Node}|T],ServiceId,M,F,A,NumTries,Delay,_Result)->
     case tcp_client:call({IpAddr,Port},{M,F,A}) of
 	{error,_}->
 	    timer:sleep(Delay),

@@ -85,7 +85,7 @@ heart_beat(Interval)->
 %
 %% --------------------------------------------------------------------
 init([]) ->
-   
+    rpc:call(node(),lib_service,log_event,[?MODULE,?LINE,info,["started service"]]),
     {ok, #state{}}.
 %% --------------------------------------------------------------------
 %% Function: handle_call/3

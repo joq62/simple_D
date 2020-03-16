@@ -27,22 +27,20 @@
 %% Returns: non
 %% --------------------------------------------------------------------
 start()->
-    
-    test_adder(),
-    
+    ?assertEqual(ok,adder_test()),    
     ok.
-
-
 
 %% --------------------------------------------------------------------
 %% Function:emulate loader
 %% Description: requires pod+container module
 %% Returns: non
 %% --------------------------------------------------------------------
-
-test_adder()->
-    ?assertMatch(glurk,tcp_client:call(?DNS_ADDRESS,{dns_service,get,["_service"]})),
-    ?assertEqual(42,tcp_client:call("adder_service",adder_service,add,[20,22],3,200)),
-
-    ok.
-    
+adder_test()->
+    case tcp_client:call(?DNS_ADDRESS,{dns_service,get,["adder_service"]}) of
+	[]->
+	    {error,[]};
+	IpAddresses->
+	    [{IpAddr,Port,_}|_]=IpAddresses,
+	    ?assertEqual(42,tcp_client:call({IpAddr,Port},{adder_service,add,[20,22]})),
+	    ok
+    end.

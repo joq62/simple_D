@@ -38,8 +38,9 @@ cases_test()->
     stop_test_system:start(),
     clean_start(),
     eunit_start(),
-    master_service_test_cases:start_init_test(),
     start_test_system:start(),
+    orchistrate_test:start(),
+    
     stop_test_system:start(),
    % catalog_test:start(),
 
@@ -63,7 +64,7 @@ cases_test()->
 %% Returns: non
 %% --------------------------------------------------------------------
 start()->
-    spawn(fun()->eunit:test({timeout,30,master_service}) end).
+    spawn(fun()->eunit:test({timeout,2*60,master_service}) end).
 
 clean_start()->
     ?assertEqual([],os:cmd("rm -rf  dns_service")),
@@ -71,10 +72,8 @@ clean_start()->
     L1=lists:keydelete(node(),2, NodesInfo),
     [rpc:call(Vm,init,stop,[])||{_,Vm,_,_}<-L1],
     [pod:delete(node(),VmName)||{VmName,_,_,_}<-L1],
-    ok=application:start(lib_service),
     ok.
 eunit_start()->
-    
     ok.
 
 clean_stop()->
