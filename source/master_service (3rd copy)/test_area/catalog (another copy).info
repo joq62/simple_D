@@ -1,0 +1,6 @@
+[{{service,"adder_service"},{dir,"/home/pi/erlang/d/source"}}].
+
+		     {dir,"adder_service","/home/pi/erlang/simple_d/source"}.
+{dir,"boot_service","/home/pi/erlang/simple_d/source"}.
+{dir,"dns_service","/home/pi/erlang/simple_d/source"}.
+{dir,"log_service","/home/pi/erlang/simple_d/source"}.
