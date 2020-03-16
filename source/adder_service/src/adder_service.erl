@@ -56,7 +56,6 @@ stop()-> gen_server:call(?MODULE, {stop},infinity).
 
 
 %%-----------------------------------------------------------------------
-
 ping()->
     gen_server:call(?MODULE, {ping},infinity).
 
@@ -85,7 +84,7 @@ heart_beat(Interval)->
 %
 %% --------------------------------------------------------------------
 init([]) ->
-    rpc:call(node(),lib_service,log_event,[?MODULE,?LINE,info,["started service"]]),
+ %   spawn(fun()->lib_service:log_event(?MODULE,?LINE,info,["started service"]) end),
     {ok, #state{}}.
 %% --------------------------------------------------------------------
 %% Function: handle_call/3
@@ -98,7 +97,7 @@ init([]) ->
 %%          {stop, Reason, State}            (aterminate/2 is called)
 %% --------------------------------------------------------------------
 handle_call({ping}, _From, State) ->
-     Reply={pong,node(),?MODULE},
+    Reply={pong,node(),?MODULE},
     {reply, Reply, State};
 
 handle_call({get_state}, _From, State) ->
@@ -111,6 +110,7 @@ handle_call({add,A,B}, _From, State) ->
 
 
 handle_call({stop}, _From, State) ->
+  %  lib_service:log_event(?MODULE,?LINE,info,["stopped service"]),
     {stop, normal, shutdown_ok, State};
 
 handle_call(Request, From, State) ->

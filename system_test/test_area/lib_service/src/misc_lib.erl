@@ -43,7 +43,13 @@ log_event(Module,Line,Severity,Info)->
 			severity=Severity,
 			message=Info
 		       },
-    tcp_client:call("log_service",log_service,store,[SysLog],5,500).
+    case tcp_client:call(?DNS_ADDRESS,{dns_service,get,["log_service"]}) of
+	[]->
+	    {error,[eexists,"log_service"]};
+	IpAddresses->
+	    [{IpAddr,Port,_}|_]=IpAddresses,
+	    tcp_client:call({IpAddr,Port},{log_service,store,[SysLog]})
+    end.
 
 %% --------------------------------------------------------------------
 %% Function: 

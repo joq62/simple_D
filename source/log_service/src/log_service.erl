@@ -103,7 +103,7 @@ all()->
 %%-----------------------------------------------------------------------
  
 store(SysLog)->
-    gen_server:cast(?MODULE, {store,SysLog}).
+    gen_server:call(?MODULE, {store,SysLog}).
 
 heart_beat(Interval)->
     gen_server:cast(?MODULE, {heart_beat,Interval}).
@@ -139,6 +139,12 @@ init([]) ->
 %%          {stop, Reason, Reply, State}   | (terminate/2 is called)
 %%          {stop, Reason, State}            (aterminate/2 is called)
 %% --------------------------------------------------------------------
+
+handle_call({store,SysLog}, _From, State) ->
+     Reply=log:store(SysLog),
+    {reply, Reply, State};
+
+
 handle_call({ping}, _From, State) ->
      Reply={pong,node(),?MODULE},
     {reply, Reply, State};

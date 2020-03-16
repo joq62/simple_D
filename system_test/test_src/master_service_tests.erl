@@ -67,7 +67,7 @@ start()->
     spawn(fun()->eunit:test({timeout,2*60,master_service}) end).
 
 clean_start()->
-    ?assertEqual([],os:cmd("rm -rf  dns_service")),
+    os:cmd("rm -rf latest.log"),
     {ok,NodesInfo}=file:consult("node.config"),
     L1=lists:keydelete(node(),2, NodesInfo),
     [rpc:call(Vm,init,stop,[])||{_,Vm,_,_}<-L1],
@@ -81,7 +81,6 @@ clean_stop()->
     ok.
 
 stop_computer_pods()->
-    os:cmd("rm -r  dns_service"),
     {ok,NodesInfo}=file:consult("node.config"),
     L1=lists:keydelete(node(),2, NodesInfo),
     [rpc:call(Vm,init,stop,[])||{_,Vm,_,_}<-L1],

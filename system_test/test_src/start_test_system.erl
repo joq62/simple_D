@@ -4,7 +4,7 @@
 %%%
 %%% {"pod_master",'pod_master@asus',"localhost",40000,parallell}.
 %%% {"pod_landet_1",'pod_landet_1@asus',"localhost",50100,parallell}.
-%%% {"pod_lgh_1",'pod_lgh_1@asus',"localhost",40100,parallell}.
+%%% {"pod_lgh_1",'pod_lgh_1@asus',"localhosx1t",40100,parallell}.
 %%% {"pod_lgh_2",'pod_lgh_2@asus',"localhost",40200,parallell}.
 %%%
 %%% {"adder_service",2,["pod_landet_1","pod_lgh_2"]}.
@@ -38,6 +38,7 @@
 start()->
     start_nodes(),
     ok=application:start(master_service),
+    dns_service:add("master_service","localhost",40000,node()),
     check_all_services_started(6,1000,1),
     check_nodes(),
     ok.
@@ -73,8 +74,12 @@ check_nodes()->
 %% -------------------------------------------------------------------
 start_nodes()->
     %% Start lib_service and tcp_server for pod_master 
-    ok=application:start(lib_service),    
-   lib_service:start_tcp_server("localhost",40000,parallell), 
+    ok=application:start(lib_service), 
+    ok=application:start(dns_service),
+    dns_service:add("dns_service","localhost",40000,node()),
+    ok=application:start(log_service),
+    dns_service:add("log_service","localhost",40000,node()),
+    lib_service:start_tcp_server("localhost",40000,parallell), 
     D=date(),
     ?assertEqual(D,tcp_client:call({"localhost",40000},{erlang,date,[]})),
     %% Create worker pods 
@@ -83,7 +88,7 @@ start_nodes()->
 						NodeId=/="pod_master"],
     IpInfoComputer={"localhost",40000},
     NodeComputer='pod_master@asus',
-    NeededServices=[{{service,"lib_service"},{dir,"/home/pi/erlang/d/source"}}],
+    NeededServices=[{{service,"lib_service"},{dir,"/home/pi/erlang/simple_d/source"}}],
   
 %  ?assertMatch([ok,ok,ok],[lib_master:start_pod(IpInfoComputer,NodeComputer,
 %						  {Node,NodeId,IpAddrPod,PortPod,ModePod},

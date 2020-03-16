@@ -27,7 +27,9 @@
 %% Returns: non
 %% --------------------------------------------------------------------
 start()->
-    ?assertEqual(ok,adder_test()),    
+    ?assertEqual(ok,adder_test()),   
+    
+    
     ok.
 
 %% --------------------------------------------------------------------
@@ -40,7 +42,8 @@ adder_test()->
 	[]->
 	    {error,[]};
 	IpAddresses->
-	    [{IpAddr,Port,_}|_]=IpAddresses,
+	    [{IpAddr,Port,_Node}|_]=IpAddresses,
 	    ?assertEqual(42,tcp_client:call({IpAddr,Port},{adder_service,add,[20,22]})),
+	    master_service:stop_unload("adder_service",IpAddr,Port),
 	    ok
     end.

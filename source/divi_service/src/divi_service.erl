@@ -10,7 +10,7 @@
 %% --------------------------------------------------------------------
 %% Include files
 %% --------------------------------------------------------------------
--include("common_macros.hrl").
+%-include("common_macros.hrl").
 %% --------------------------------------------------------------------
 
 %% --------------------------------------------------------------------
@@ -85,7 +85,7 @@ heart_beat(Interval)->
 %
 %% --------------------------------------------------------------------
 init([]) ->
-    rpc:call(node(),lib_service,log_event,[?MODULE,?LINE,info,["started service"]]),
+%    lib_service:log_event(?MODULE,?LINE,info,["started service"]),
     {ok, #state{}}.
 %% --------------------------------------------------------------------
 %% Function: handle_call/3
@@ -111,6 +111,7 @@ handle_call({divi,A,B}, _From, State) ->
 
 
 handle_call({stop}, _From, State) ->
+  %  lib_service:log_event(?MODULE,?LINE,info,["started service"]),
     {stop, normal, shutdown_ok, State};
 
 handle_call(Request, From, State) ->

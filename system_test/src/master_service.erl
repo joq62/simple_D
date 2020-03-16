@@ -171,9 +171,16 @@ handle_call({load_start,ServiceId,IpAddrPod,PortPod}, _From, State) ->
 	    CatalogInfo=lists:keyfind({service,ServiceId},1,State#state.catalog),
   
 %    Reply=[ServiceId,{IpAddrNode,PortNode},[Node,NodeId,[CatalogInfo]]],
-	    Reply={tcp_client:call({IpAddrNode,PortNode},
-				   {container,create,[Node,NodeId,[CatalogInfo]]}),
-		   ServiceId,IpAddrPod,PortPod},
+	     Reply={tcp_client:call({IpAddrNode,PortNode},
+				    {container,create,[Node,NodeId,[CatalogInfo]]}),
+		    ServiceId,IpAddrPod,PortPod},
+	    case Reply of
+		{ok,ServiceId,IpAddrPod,PortPod}->
+		    lib_service:log_event(?MODULE,?LINE,info,["ok Started ",ServiceId,IpAddrPod,PortPod]);
+		Err->
+		    lib_service:log_event(?MODULE,?LINE,info,["Error Started Service ",ServiceId,IpAddrPod,PortPod,Err])
+	    end,
+	    
 	    true=tcp_client:call(?DNS_ADDRESS,{dns_service,add,[ServiceId,IpAddrNode,PortNode,Node]})
     end,
     {reply, Reply,State};
@@ -186,6 +193,7 @@ handle_call({stop_unload,ServiceId,IpAddrPod,PortPod}, _From, State) ->
     {NodeId,Node,IpAddrNode,PortNode}=L,
     tcp_client:call({IpAddrNode,PortNode},{container,delete,[Node,NodeId,[ServiceId]]}),
     true=tcp_client:call(?DNS_ADDRESS,{dns_service,delete,[ServiceId,IpAddrNode,PortNode,Node]}),
+    lib_service:log_event(?MODULE,?LINE,info,["ok Stopped Service ",ServiceId,IpAddrPod,PortPod]),
     Reply=ok,
     {reply, Reply,State};
 

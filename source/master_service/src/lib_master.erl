@@ -134,14 +134,14 @@ update_nodes()->
 
 init(CatalogInfo,NodesInfo)->
     %Start dns_Service
-    ok=start_service("dns_service",".",'pod_master@asus',CatalogInfo,NodesInfo),
+%    ok=start_service("dns_service",".",'pod_master@asus',CatalogInfo,NodesInfo),
     
    %% tcp_server will already be started by boot SW 
-    {_NodeId,Node,IpAddr,Port,_Mode}=lists:keyfind('pod_master@asus',2,NodesInfo),
+    {_NodeId,_Node,_IpAddr,_Port,_Mode}=lists:keyfind('pod_master@asus',2,NodesInfo),
   %  ok=lib_service:start_tcp_server(IpAddr,Port,Mode),
 
     %% Register master service 
-    true=dns_service:add("master_service",IpAddr,Port,Node),
+ %   true=dns_service:add("master_service",IpAddr,Port,Node),
     ok. 
 %% --------------------------------------------------------------------
 %% Function: 

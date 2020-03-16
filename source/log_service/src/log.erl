@@ -235,5 +235,6 @@ store(SysLogInfo)->
     {ok,S}=file:open(?LATEST_LOG,write),
     NewContent=[SysLogInfo|Info],
     lists:foreach(fun(X)->io:format(S,"~p.~n",[X]) end,NewContent),
-    file:close(S).
+    file:close(S),
+    {ok,stored}.
 			      

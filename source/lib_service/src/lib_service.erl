@@ -119,8 +119,7 @@ init([]) ->
 %% --------------------------------------------------------------------
 
 handle_call({log_event,Module,Line,Severity,Info}, _Fro,State) ->
-    spawn(fun()->misc_lib:log_event(Module,Line,Severity,Info) end),
-    Reply=fuck_off,
+    Reply=misc_lib:log_event(Module,Line,Severity,Info),
     {reply, Reply,State};
 
 handle_call({dns_address}, _From, State) ->
